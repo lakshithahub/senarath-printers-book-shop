@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Stock Inventory - Lakshitha POS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; padding-bottom: 50px; }
+
+        /* Navigation Bar */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: #2c3e50; padding: 15px 50px; color: #f1c40f;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-links { list-style: none; display: flex; gap: 25px; }
+        .nav-links a { color: #ffffff; text-decoration: none; transition: 0.3s; font-weight: 600; }
+
+        /* Floating Logo */
+        .logo-container { position: fixed; top: 50%; right: 30px; transform: translateY(-50%); z-index: 999; }
+        .floating-logo {
+            width: 100px; height: 100px; background: linear-gradient(145deg, #063525, #1a5c46);
+            border: 3px solid #42c498; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            animation: verticalFloat 4s ease-in-out infinite;
+        }
+        @keyframes verticalFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+        /* Container */
+        .header-section { text-align: center; padding: 40px 20px; }
+        .title-text { color: #2ecc71; font-size: 45px; font-weight: bold; }
+
+        .inventory-box { max-width: 950px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        .input-group { display: flex; gap: 10px; margin-bottom: 25px; }
+        input { padding: 12px; border: 1px solid #ddd; border-radius: 8px; flex: 1; outline-color: #2ecc71; font-size: 16px; }
+        
+        .add-btn { background: #2ecc71; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-print { background: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; font-size: 16px; }
+
+        /* Table */
+        .stocktable { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .stocktable th { background-color: #34495e; color: white; padding: 15px; text-align: left; }
+        .stocktable td { padding: 15px; border-bottom: 1px solid #eee; }
+        .del-btn { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+
+        /* Print Design */
+        @media print {
+            .navbar, .logo-container, .input-group, .del-btn, .btn-print, .header-section p:not(.title-text) { display: none !important; }
+            body { background: white; padding: 0; }
+            .inventory-box { box-shadow: none; max-width: 100%; border: none; padding: 0; }
+            .title-text { font-size: 30px; margin-bottom: 20px; color: black; }
+            .stocktable th { background-color: #eee !important; color: black; border: 1px solid #ddd; }
+            .stocktable td { border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo" style="font-size: 26px; font-weight: bold;">LAKSHITHA STOCK</div>
+        <ul class="nav-links">
+            <li><a href="udara{sell inter fase}.html">SELL PAGE</a></li>
+            <li><a href="#" onclick="location.reload()">REFRESH</a></li>
+        </ul>
+    </nav>
+
+    <div class="logo-container">
+        <div class="floating-logo">
+            <img src="file:///C:/LAKSHITHA/test%20one/UDARA[LOGO].jpeg" alt="Logo" style="width: 85%; height: 85%; border-radius: 50%; object-fit: cover;">
+        </div>
+    </div>
+
+    <div class="header-section">
+        <p class="title-text">Current Stock Report</p>
+        <p style="opacity: 0.7;">Date: <span id="currentDate"></span></p>
+    </div>
+
+    <div class="inventory-box">
+        <div class="input-group">
+            <input type="text" id="itemName" placeholder="Item Name" onkeydown="if(event.key==='Enter') document.getElementById('itemPrice').focus()">
+            <input type="number" id="itemPrice" placeholder="Price (Rs.)" onkeydown="if(event.key==='Enter') document.getElementById('itemQty').focus()">
+            <input type="number" id="itemQty" placeholder="Add Qty" onkeydown="if(event.key==='Enter') updateStock()">
+            <button class="add-btn" onclick="updateStock()">Update Stock</button>
+        </div>
+
+        <table class="stocktable">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th>Unit Price (Rs.)</th>
+                    <th>Available Qty</th>
+                    <th class="del-btn">Action</th>
+                </tr>
+            </thead>
+            <tbody id="stockBody"></tbody>
+        </table>
+
+        <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> PRINT STOCK REPORT</button>
+    </div>
+
+    <script>
+        const STOCK_KEY = 'inventory_stock';
+
+        window.onload = function() {
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString();
+            renderStock();
+        };
+
+        function updateStock() {
+            let name = document.getElementById('itemName').value.trim();
+            let price = parseFloat(document.getElementById('itemPrice').value);
+            let qty = parseInt(document.getElementById('itemQty').value);
+
+            if (!name || isNaN(price) || isNaN(qty)) {
+                alert("කරුණාකර සියලු විස්තර නිවැරදිව ඇතුළත් කරන්න.");
+                return;
+            }
+
+            let stock = JSON.parse(localStorage.getItem(STOCK_KEY)) || [];
+            let existingItem = stock.find(item => item.name.toLowerCase() === name.toLowerCase());
+
+            if (existingItem) {
+                existingItem.qty += qty;
+                existingItem.price = price;
+            } else {
+                stock.push({ name, price, qty });
+            }
+
+            localStorage.setItem(STOCK_KEY, JSON.stringify(stock));
+            renderStock();
+            
+            document.getElementById('itemName').value = "";
+            document.getElementById('itemPrice').value = "";
+            document.getElementById('itemQty').value = "";
+            document.getElementById('itemName').focus();
+        }
+
+        function deleteItem(index) {
+            if (confirm("මෙම බඩුව ඉවත් කරන්නද?")) {
+                let stock = JSON.parse(localStorage.getItem(STOCK_KEY)) || [];
+                stock.splice(index, 1);
+                localStorage.setItem(STOCK_KEY, JSON.stringify(stock));
+                renderStock();
+            }
+        }
+
+        function renderStock() {
+            let stock = JSON.parse(localStorage.getItem(STOCK_KEY)) || [];
+            let tableBody = document.getElementById('stockBody');
+            tableBody.innerHTML = "";
+
+            stock.forEach((item, index) => {
+                tableBody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.price.toFixed(2)}</td>
+                        <td><b>${item.qty}</b></td>
+                        <td class="del-btn"><button class="del-btn" onclick="deleteItem(${index})">Remove</button></td>
+                    </tr>
+                `);
+            });
+        }
+    </script>
+</body>
+</html>

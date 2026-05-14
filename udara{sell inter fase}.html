@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced POS - Senarath Printers</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 900px; margin: auto; display: flex; gap: 20px; flex-wrap: wrap; }
+        .pos-side { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+        .table-side { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1.5; min-width: 350px; }
+        
+        h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; color: #2c3e50; }
+        label { font-weight: 600; font-size: 14px; color: #555; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0 18px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        
+        .btn-add { width: 100%; background: #007bff; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .btn-add:hover { background: #0056b3; }
+        
+        .btn-print { width: 100%; background: #28a745; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 16px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border-bottom: 1px solid #eee; padding: 12px; text-align: left; }
+        .total-section { font-size: 24px; font-weight: bold; text-align: right; margin-top: 20px; color: #d9534f; }
+
+        .btn-back {
+            font-size: 1rem; padding: 10px 25px; border: none; border-radius: 0.4rem;
+            cursor: pointer; text-transform: uppercase; background-color: rgb(14, 14, 26);
+            color: rgb(234, 234, 234); font-weight: 700; transition: 0.6s; margin-bottom: 20px;
+            display: inline-block; text-decoration: none; text-align: center;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #bill-print-area, #bill-print-area * { visibility: visible; }
+            #bill-print-area { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container no-print">
+    <a href="udara{invoice}.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> BACK
+    </a> 
+
+    <div style="width: 100%; display: flex; gap: 20px;">
+        <div class="pos-side">
+            <h3><i class="fas fa-plus-circle"></i> Add Item</h3>
+            
+            <label>Item Name</label>
+            <input type="text" id="itemName" list="itemSuggestions" placeholder="Search or type item...">
+            <datalist id="itemSuggestions"></datalist>
+
+            <label>Price (Rs.)</label>
+            <input type="number" id="itemPrice" placeholder="0.00" step="0.01">
+
+            <label>Quantity</label>
+            <input type="number" id="itemQty" value="1" min="1">
+
+            <button class="btn-add" id="addItem"><i class="fas fa-cart-plus"></i> ADD TO LIST</button>
+        </div>
+
+        <div class="table-side">
+            <h3><i class="fas fa-list"></i> Current Order</h3>
+            <table id="orderTable">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="total-section">Total: Rs. <span id="grandTotal">0.00</span></div>
+            <button class="btn-print" id="printBill"><i class="fas fa-print"></i> PRINT FULL BILL</button>
+        </div>
+    </div>
+</div>
+
+<div id="bill-print-area" style="display:none; padding: 40px;">
+    <div style="text-align: center;">
+        <h1>SENARATH PRINTERS</h1>
+        <p>Premium Printing & Stationery Solutions</p>
+        <p>Tel: 0769996722 | Date: <span id="p-date"></span></p>
+    </div>
+    <hr>
+    <table style="width:100%; margin: 20px 0;">
+        <thead>
+            <tr style="border-bottom: 2px solid #333;">
+                <th>Item Description</th>
+                <th>Qty</th>
+                <th style="text-align: right;">Amount (Rs.)</th>
+            </tr>
+        </thead>
+        <tbody id="p-items"></tbody>
+    </table>
+    <hr>
+    <div style="text-align: right;"><h3>Grand Total: Rs. <span id="p-total"></span></h3></div>
+</div>
+
+<script>
+let total = 0;
+let currentBillItems = []; // බිල් එකට දාන බඩු තාවකාලිකව තියාගන්න
+
+$(document).ready(function() {
+    
+    // Inventory එකෙන් Suggestions ලෝඩ් කිරීම
+    loadSuggestions();
+
+    function loadSuggestions() {
+        let stock = JSON.parse(localStorage.getItem('inventory_stock')) || [];
+        let options = '';
+        stock.forEach(item => {
+            options += `<option value="${item.name}">`;
+        });
+        $('#itemSuggestions').html(options);
+    }
+
+    // Navigation
+    $('#itemName').on('keydown', e => { if (e.key === 'Enter') $('#itemPrice').focus(); });
+    $('#itemPrice').on('keydown', e => { if (e.key === 'Enter') $('#itemQty').focus(); });
+    $('#itemQty').on('keydown', e => { if (e.key === 'Enter') $('#addItem').click(); });
+
+    // Add Item Logic
+    $('#addItem').click(function() {
+        let name = $('#itemName').val().trim();
+        let price = parseFloat($('#itemPrice').val());
+        let qty = parseInt($('#itemQty').val());
+
+        if (name === "" || isNaN(price)) {
+            alert("කරුණාකර විස්තර ඇතුළත් කරන්න.");
+            return;
+        }
+
+        // --- ස්ටොක් එක ඇත්දැයි බැලීම ---
+        let stock = JSON.parse(localStorage.getItem('inventory_stock')) || [];
+        let stockItem = stock.find(i => i.name.toLowerCase() === name.toLowerCase());
+
+        if (stockItem && stockItem.qty < qty) {
+            alert("තොග මදි! ඉතිරිව ඇත්තේ: " + stockItem.qty);
+            return;
+        }
+
+        let subtotal = price * qty;
+        total += subtotal;
+
+        // බිල් එකට දත්ත එක් කිරීම
+        currentBillItems.push({ name, qty, subtotal });
+
+        $('#orderTable tbody').append(`
+            <tr>
+                <td>${name}</td>
+                <td>${qty}</td>
+                <td>${subtotal.toFixed(2)}</td>
+            </tr>
+        `);
+
+        $('#grandTotal').text(total.toFixed(2));
+        $('#itemName').val('').focus();
+        $('#itemPrice').val('');
+        $('#itemQty').val('1');
+    });
+
+    // Print & Update Stock
+    $('#printBill').click(function() {
+        if (currentBillItems.length === 0) {
+            alert("බිල්පත හිස්!");
+            return;
+        }
+
+        // 1. ස්ටොක් එක අඩු කිරීම
+        let stock = JSON.parse(localStorage.getItem('inventory_stock')) || [];
+        
+        currentBillItems.forEach(soldItem => {
+            let itemInStock = stock.find(i => i.name.toLowerCase() === soldItem.name.toLowerCase());
+            if (itemInStock) {
+                itemInStock.qty -= soldItem.qty;
+            }
+        });
+
+        // 2. අලුත් ස්ටොක් එක සේව් කිරීම
+        localStorage.setItem('inventory_stock', JSON.stringify(stock));
+
+        // 3. බිල් එක ප්‍රින්ට් කිරීම
+        $('#p-items').html($('#orderTable tbody').html());
+        $('#p-total').text(total.toFixed(2));
+        $('#p-date').text(new Date().toLocaleString());
+        $('#bill-print-area').show();
+        window.print();
+        $('#bill-print-area').hide();
+
+        if(confirm("බිල්පත සාර්ථකයි! අලුත් බිල්පතක් අරඹන්නද?")) {
+            location.reload();
+        }
+    });
+});
+</script>
+</body>
+</html>
