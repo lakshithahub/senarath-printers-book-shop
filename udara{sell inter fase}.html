@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced POS - Senarath Printers</title>
+    <title>Sales - Senarath Printers</title>
     
-    <!-- jQuery සහ Font Awesome (Icons සඳහා) සම්බන්ධ කිරීම -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -19,18 +18,19 @@
             --text-dim: #94a3b8;
             --border-color: #2d3142;
             --input-bg: #1e2533;
+            --danger: #ff4d4d;
+            --success: #2ecc71;
         }
 
         body { 
-            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; 
+            font-family: 'Inter', sans-serif; 
             background: var(--bg-dark); 
             color: var(--text-main);
-            padding: 0; 
             margin: 0;
-            line-height: 1.6;
+            display: flex;
         }
 
-        /* ----- මෙනු එකේ ස්ටයිල් (Navigation Styles) ----- */
+        /* Sidebar Style */
         .sidebar {
             width: 250px;
             background: var(--card-bg);
@@ -40,126 +40,171 @@
             padding: 20px;
         }
 
-        .logo-area {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent-yellow);
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .logo-area { font-size: 1.2rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 30px; }
+        .menu-list { list-style: none; padding: 0; }
+        .menu-link { display: flex; align-items: center; gap: 12px; color: var(--text-main); text-decoration: none; padding: 12px; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; }
+        .menu-link:hover { background: var(--accent-glow); color: var(--accent-yellow); }
+        .menu-link.active { background: var(--accent-yellow); color: var(--bg-dark); font-weight: bold; }
 
-        .menu-list {
-            list-style: none;
-            padding: 0;
-        }
+        /* Main Layout */
+        .main-content { margin-left: 290px; padding: 30px; width: calc(100% - 320px); display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
 
-        .menu-item {
-            margin-bottom: 10px;
-        }
+        /* Product Section */
+        .product-section { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); }
+        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: white; margin-bottom: 20px; outline: none; }
 
-        /* Dashboard ලින්ක් එකේ පෙනුම */
-        .menu-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-main);
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .product-card { background: var(--bg-dark); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; cursor: pointer; transition: 0.3s; }
+        .product-card:hover { border-color: var(--accent-yellow); transform: translateY(-3px); }
+        .product-card h4 { margin: 10px 0 5px; font-size: 0.9rem; }
+        .product-card .price { color: var(--accent-yellow); font-weight: bold; }
 
-        .menu-link:hover {
-            background: var(--accent-glow);
-            color: var(--accent-yellow);
-        }
-
-        .menu-link.active {
-            background: var(--accent-yellow);
-            color: var(--bg-dark);
-            font-weight: bold;
-        }
-
-        /* ප්‍රධාන කොටස (Main Content) */
-        .main-content {
-            margin-left: 270px;
-            padding: 30px;
-        }
-
-        .container { max-width: 1200px; margin: auto; }
+        /* Cart Section */
+        .cart-section { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); height: calc(100vh - 100px); position: sticky; top: 30px; display: flex; flex-direction: column; }
+        .cart-items { flex-grow: 1; overflow-y: auto; margin-top: 15px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
         
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
-        }
+        .qty-btn { background: var(--input-bg); border: none; color: white; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; }
+        .remove-btn { color: var(--danger); cursor: pointer; margin-left: 10px; }
 
-        h1 { color: var(--accent-yellow); }
+        .cart-footer { border-top: 2px solid var(--border-color); padding-top: 15px; }
+        .total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 15px; }
+        
+        .checkout-btn { width: 100%; background: var(--accent-yellow); color: var(--bg-dark); border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        .checkout-btn:hover { background: #e6b800; box-shadow: 0 0 15px var(--accent-glow); }
     </style>
 </head>
 <body>
 
-    <!-- [START] මෙතන ඉඳන් තමයි Dashboard එකට යන Sidebar මෙනු එක තියෙන්නේ -->
     <div class="sidebar">
-        <div class="logo-area">
-            <i class="fas fa-print"></i> Senarath Printers
-        </div>
-
+        <div class="logo-area"><i class="fas fa-print"></i> Senarath POS</div>
         <ul class="menu-list">
-            <!-- Dashboard ලින්ක් එක - මෙන්න මේක තමයි ප්‍රධාන ලින්ක් එක -->
-            <li class="menu-item">
-                <a href="README.md" class="menu-link active">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
-            </li>
-            
-            <li class="menu-item">
-                <a href="inventory.html" class="menu-link">
-                    <i class="fas fa-box"></i> Inventory
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="sales.html" class="menu-link">
-                    <i class="fas fa-shopping-cart"></i> Sales (විකුණුම්)
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="reports.html" class="menu-link">
-                    <i class="fas fa-file-invoice"></i> Reports (වාර්තා)
-                </a>
-            </li>
+            <li><a href="README.md" class="menu-link"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="inventory.html" class="menu-link"><i class="fas fa-box"></i> Inventory</a></li>
+            <li><a href="#" class="menu-link active"><i class="fas fa-shopping-cart"></i> Sales</a></li>
         </ul>
     </div>
-    <!-- [END] Sidebar මෙනු එක අවසානය -->
 
     <div class="main-content">
-        <div class="container">
-            <!-- Header කොටස -->
-            <div class="header-section">
-                <h1>Advanced POS System</h1>
-                <div class="user-info">
-                    <i class="fas fa-user-circle"></i> Lakshitha
+        <!-- වම් පැත්ත: භාණ්ඩ තෝරාගැනීම -->
+        <div class="product-section">
+            <h2>Select Items</h2>
+            <input type="text" id="productSearch" class="search-box" placeholder="Search item code or name...">
+            
+            <div class="product-grid" id="productGrid">
+                <!-- Example Items (මෙහි ඔබේ Price List එකට අනුව භාණ්ඩ පිරවිය හැක) -->
+                <div class="product-card" onclick="addToCart(1, 'A4 Paper Bundle', 1250)">
+                    <i class="fas fa-file-alt fa-2x"></i>
+                    <h4>A4 Paper Bundle</h4>
+                    <p class="price">Rs. 1,250.00</p>
+                </div>
+                <div class="product-card" onclick="addToCart(2, 'Color Print', 45)">
+                    <i class="fas fa-fill-drip fa-2x"></i>
+                    <h4>Color Print</h4>
+                    <p class="price">Rs. 45.00</p>
+                </div>
+                <div class="product-card" onclick="addToCart(3, 'Binding Work', 350)">
+                    <i class="fas fa-book fa-2x"></i>
+                    <h4>Binding Work</h4>
+                    <p class="price">Rs. 350.00</p>
                 </div>
             </div>
+        </div>
 
-            <!-- මෙතන ඉඳන් ඔබේ අනෙකුත් Dashboard විස්තර දාන්න පුළුවන් -->
-            <div style="margin-top: 40px;">
-                <h3>Dashboard Overview</h3>
-                <p style="color: var(--text-dim);">Senarath Printers POS පද්ධතියට සාදරයෙන් පිළිගනිමු.</p>
+        <!-- දකුණු පැත්ත: කරත්තය (Bill) -->
+        <div class="cart-section">
+            <h3>Current Order</h3>
+            <div class="cart-items" id="cartItems">
+                <p style="color: var(--text-dim); text-align: center;">Cart is empty</p>
+            </div>
+
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span>Total:</span>
+                    <span id="grandTotal">Rs. 0.00</span>
+                </div>
+                <button class="checkout-btn" onclick="processCheckout()">
+                    <i class="fas fa-check-circle"></i> COMPLETE ORDER
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // පිටුව Load වූ පසු වැඩ කරන කොටස
-        $(document).ready(function() {
-            console.log("POS System Ready!");
+        let cart = [];
+
+        // 1. භාණ්ඩයක් Cart එකට එකතු කිරීම
+        function addToCart(id, name, price) {
+            let existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({ id, name, price, qty: 1 });
+            }
+            renderCart();
+        }
+
+        // 2. ප්‍රමාණය වෙනස් කිරීම
+        function updateQty(id, amount) {
+            let item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += amount;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+                renderCart();
+            }
+        }
+
+        // 3. කරත්තය Update කිරීම (UI)
+        function renderCart() {
+            let cartHtml = "";
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartHtml = '<p style="color: var(--text-dim); text-align: center;">Cart is empty</p>';
+            } else {
+                cart.forEach(item => {
+                    let subtotal = item.price * item.qty;
+                    total += subtotal;
+                    cartHtml += `
+                        <div class="cart-item">
+                            <div>
+                                <strong>${item.name}</strong><br>
+                                <small>${item.price.toFixed(2)} x ${item.qty}</small>
+                            </div>
+                            <div>
+                                <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                                <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                                <span class="remove-btn" onclick="updateQty(${item.id}, -${item.qty})"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            $("#cartItems").html(cartHtml);
+            $("#grandTotal").text(`Rs. ${total.toLocaleString()}.00`);
+        }
+
+        // 4. Checkout Logic
+        function processCheckout() {
+            if (cart.length === 0) {
+                alert("කරුණාකර භාණ්ඩයක් තෝරන්න!");
+                return;
+            }
+            alert("ගනුදෙනුව සාර්ථකයි! මුළු මුදල: " + $("#grandTotal").text());
+            cart = [];
+            renderCart();
+        }
+
+        // 5. Search Logic (Simple)
+        $("#productSearch").on("keyup", function() {
+            let value = $(this).val().toLowerCase();
+            $(".product-card").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
         });
     </script>
 
