@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,35 +8,124 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 900px; margin: auto; display: flex; gap: 20px; flex-wrap: wrap; }
-        .pos-side { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
-        .table-side { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1.5; min-width: 350px; }
-        
-        h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; color: #2c3e50; }
-        label { font-weight: 600; font-size: 14px; color: #555; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0 18px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        
-        .btn-add { width: 100%; background: #007bff; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn-add:hover { background: #0056b3; }
-        
-        .btn-print { width: 100%; background: #28a745; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 16px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border-bottom: 1px solid #eee; padding: 12px; text-align: left; }
-        .total-section { font-size: 24px; font-weight: bold; text-align: right; margin-top: 20px; color: #d9534f; }
-
-        .btn-back {
-            font-size: 1rem; padding: 10px 25px; border: none; border-radius: 0.4rem;
-            cursor: pointer; text-transform: uppercase; background-color: rgb(14, 14, 26);
-            color: rgb(234, 234, 234); font-weight: 700; transition: 0.6s; margin-bottom: 20px;
-            display: inline-block; text-decoration: none; text-align: center;
+        :root {
+            --bg-dark: #0f111a;
+            --card-bg: #1a1d29;
+            --accent-yellow: #ffcc00;
+            --text-main: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --border-color: #2d3142;
         }
 
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main);
+            padding: 20px; 
+            margin: 0;
+        }
+
+        .container { max-width: 1100px; margin: auto; display: flex; gap: 25px; flex-wrap: wrap; }
+        
+        /* Side Panels */
+        .pos-side, .table-side { 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            border: 1px solid var(--border-color);
+        }
+        .pos-side { flex: 1; min-width: 320px; }
+        .table-side { flex: 1.5; min-width: 350px; border-top: 4px solid var(--accent-yellow); }
+        
+        h3 { color: var(--accent-yellow); margin-top: 0; display: flex; align-items: center; gap: 10px; font-size: 1.4rem; }
+        
+        label { font-weight: 600; font-size: 13px; color: var(--accent-yellow); text-transform: uppercase; letter-spacing: 1px; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0 20px 0; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            background: #25293a;
+            color: white;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent-yellow); outline: none; box-shadow: 0 0 8px rgba(255, 204, 0, 0.2); }
+        
+        /* Buttons */
+        .btn-add { 
+            width: 100%; 
+            background: var(--accent-yellow); 
+            color: #000; 
+            border: none; 
+            padding: 15px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 800; 
+            font-size: 16px; 
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-add:hover { background: #e6b800; transform: translateY(-2px); }
+        
+        .btn-print { 
+            width: 100%; 
+            background: transparent; 
+            color: var(--accent-yellow); 
+            border: 2px solid var(--accent-yellow); 
+            padding: 15px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 800; 
+            margin-top: 20px; 
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .btn-print:hover { background: var(--accent-yellow); color: #000; }
+
+        /* Table Design */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { color: var(--text-dim); font-size: 12px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        td { padding: 15px 12px; border-bottom: 1px solid var(--border-color); font-size: 15px; }
+        
+        .total-section { 
+            font-size: 28px; 
+            font-weight: 800; 
+            text-align: right; 
+            margin-top: 25px; 
+            color: var(--accent-yellow); 
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .btn-back {
+            background: #25293a;
+            color: var(--accent-yellow);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            transition: 0.3s;
+        }
+        .btn-back:hover { background: var(--border-color); }
+
+        /* Print Area Styles (Clean for Paper) */
         @media print {
             body * { visibility: hidden; }
             #bill-print-area, #bill-print-area * { visibility: visible; }
-            #bill-print-area { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            #bill-print-area { 
+                position: absolute; left: 0; top: 0; width: 100%; 
+                display: block !important; color: #000; background: #fff;
+            }
             .no-print { display: none !important; }
         }
     </style>
@@ -44,73 +133,89 @@
 <body>
 
 <div class="container no-print">
-    <a href="udara{invoice}.html" class="btn-back">
-        <i class="fas fa-arrow-left"></i> BACK
-    </a> 
+    <div style="width: 100%;">
+        <a href="udara{invoice}.html" class="btn-back">
+            <i class="fas fa-chevron-left"></i> BACK TO DASHBOARD
+        </a> 
+    </div>
 
-    <div style="width: 100%; display: flex; gap: 20px;">
+    <div style="width: 100%; display: flex; gap: 20px; flex-wrap: wrap;">
         <div class="pos-side">
-            <h3><i class="fas fa-plus-circle"></i> Add Item</h3>
+            <h3><i class="fas fa-cart-plus"></i> NEW ITEM</h3>
             
-            <label>Item Name</label>
-            <input type="text" id="itemName" list="itemSuggestions" placeholder="Search or type item...">
+            <label>Item Description</label>
+            <input type="text" id="itemName" list="itemSuggestions" placeholder="Search product...">
             <datalist id="itemSuggestions"></datalist>
 
-            <label>Price (Rs.)</label>
+            <label>Unit Price (Rs.)</label>
             <input type="number" id="itemPrice" placeholder="0.00" step="0.01">
 
             <label>Quantity</label>
             <input type="number" id="itemQty" value="1" min="1">
 
-            <button class="btn-add" id="addItem"><i class="fas fa-cart-plus"></i> ADD TO LIST</button>
+            <button class="btn-add" id="addItem">
+                <i class="fas fa-plus"></i> ADD TO INVOICE
+            </button>
         </div>
 
         <div class="table-side">
-            <h3><i class="fas fa-list"></i> Current Order</h3>
+            <h3><i class="fas fa-receipt"></i> BILLING DETAILS</h3>
             <table id="orderTable">
                 <thead>
                     <tr>
                         <th>Item</th>
                         <th>Qty</th>
-                        <th>Subtotal</th>
+                        <th style="text-align: right;">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
-            <div class="total-section">Total: Rs. <span id="grandTotal">0.00</span></div>
-            <button class="btn-print" id="printBill"><i class="fas fa-print"></i> PRINT FULL BILL</button>
+            
+            <div class="total-section">
+                <span style="font-size: 14px; color: var(--text-dim); font-weight: 400;">GRAND TOTAL:</span><br>
+                Rs. <span id="grandTotal">0.00</span>
+            </div>
+            
+            <button class="btn-print" id="printBill">
+                <i class="fas fa-print"></i> GENERATE RECEIPT
+            </button>
         </div>
     </div>
 </div>
 
-<div id="bill-print-area" style="display:none; padding: 40px;">
+<div id="bill-print-area" style="display:none; padding: 30px; font-family: 'Courier New', Courier, monospace;">
     <div style="text-align: center;">
-        <h1>SENARATH PRINTERS</h1>
-        <p>Premium Printing & Stationery Solutions</p>
-        <p>Tel: 0769996722 | Date: <span id="p-date"></span></p>
+        <h2 style="margin:0;">SENARATH PRINTERS</h2>
+        <p style="margin:5px 0;">Quality Printing & Solutions</p>
+        <p style="font-size: 12px;">Hotline: 0769996722</p>
+        <p style="font-size: 12px;">Date: <span id="p-date"></span></p>
     </div>
-    <hr>
-    <table style="width:100%; margin: 20px 0;">
+    <div style="border-top: 1px dashed #000; margin: 10px 0;"></div>
+    <table style="width:100%; font-size: 14px;">
         <thead>
-            <tr style="border-bottom: 2px solid #333;">
-                <th>Item Description</th>
+            <tr style="text-align: left;">
+                <th>Description</th>
                 <th>Qty</th>
-                <th style="text-align: right;">Amount (Rs.)</th>
+                <th style="text-align: right;">Amount</th>
             </tr>
         </thead>
         <tbody id="p-items"></tbody>
     </table>
-    <hr>
-    <div style="text-align: right;"><h3>Grand Total: Rs. <span id="p-total"></span></h3></div>
+    <div style="border-top: 1px dashed #000; margin: 10px 0;"></div>
+    <div style="text-align: right;">
+        <h3 style="margin:0;">Total: Rs. <span id="p-total"></span></h3>
+    </div>
+    <div style="text-align: center; margin-top: 20px; font-size: 12px;">
+        <p>Thank You for Your Business!</p>
+        <p>Software by Lakshitha</p>
+    </div>
 </div>
 
 <script>
 let total = 0;
-let currentBillItems = []; // බිල් එකට දාන බඩු තාවකාලිකව තියාගන්න
+let currentBillItems = [];
 
 $(document).ready(function() {
-    
-    // Inventory එකෙන් Suggestions ලෝඩ් කිරීම
     loadSuggestions();
 
     function loadSuggestions() {
@@ -122,42 +227,39 @@ $(document).ready(function() {
         $('#itemSuggestions').html(options);
     }
 
-    // Navigation
+    // Input Navigation
     $('#itemName').on('keydown', e => { if (e.key === 'Enter') $('#itemPrice').focus(); });
     $('#itemPrice').on('keydown', e => { if (e.key === 'Enter') $('#itemQty').focus(); });
     $('#itemQty').on('keydown', e => { if (e.key === 'Enter') $('#addItem').click(); });
 
-    // Add Item Logic
     $('#addItem').click(function() {
         let name = $('#itemName').val().trim();
         let price = parseFloat($('#itemPrice').val());
         let qty = parseInt($('#itemQty').val());
 
         if (name === "" || isNaN(price)) {
-            alert("කරුණාකර විස්තර ඇතුළත් කරන්න.");
+            alert("Please enter valid item details.");
             return;
         }
 
-        // --- ස්ටොක් එක ඇත්දැයි බැලීම ---
         let stock = JSON.parse(localStorage.getItem('inventory_stock')) || [];
         let stockItem = stock.find(i => i.name.toLowerCase() === name.toLowerCase());
 
         if (stockItem && stockItem.qty < qty) {
-            alert("තොග මදි! ඉතිරිව ඇත්තේ: " + stockItem.qty);
+            alert("Insufficient Stock! Available: " + stockItem.qty);
             return;
         }
 
         let subtotal = price * qty;
         total += subtotal;
 
-        // බිල් එකට දත්ත එක් කිරීම
         currentBillItems.push({ name, qty, subtotal });
 
         $('#orderTable tbody').append(`
             <tr>
                 <td>${name}</td>
                 <td>${qty}</td>
-                <td>${subtotal.toFixed(2)}</td>
+                <td style="text-align: right;">${subtotal.toFixed(2)}</td>
             </tr>
         `);
 
@@ -167,35 +269,39 @@ $(document).ready(function() {
         $('#itemQty').val('1');
     });
 
-    // Print & Update Stock
     $('#printBill').click(function() {
         if (currentBillItems.length === 0) {
-            alert("බිල්පත හිස්!");
+            alert("Order list is empty!");
             return;
         }
 
-        // 1. ස්ටොක් එක අඩු කිරීම
         let stock = JSON.parse(localStorage.getItem('inventory_stock')) || [];
-        
         currentBillItems.forEach(soldItem => {
             let itemInStock = stock.find(i => i.name.toLowerCase() === soldItem.name.toLowerCase());
-            if (itemInStock) {
-                itemInStock.qty -= soldItem.qty;
-            }
+            if (itemInStock) { itemInStock.qty -= soldItem.qty; }
         });
 
-        // 2. අලුත් ස්ටොක් එක සේව් කිරීම
         localStorage.setItem('inventory_stock', JSON.stringify(stock));
 
-        // 3. බිල් එක ප්‍රින්ට් කිරීම
-        $('#p-items').html($('#orderTable tbody').html());
+        // Prepare Print View
+        let printRows = '';
+        currentBillItems.forEach(item => {
+            printRows += `<tr>
+                <td>${item.name}</td>
+                <td>${item.qty}</td>
+                <td style="text-align: right;">${item.subtotal.toFixed(2)}</td>
+            </tr>`;
+        });
+
+        $('#p-items').html(printRows);
         $('#p-total').text(total.toFixed(2));
         $('#p-date').text(new Date().toLocaleString());
+        
         $('#bill-print-area').show();
         window.print();
         $('#bill-print-area').hide();
 
-        if(confirm("බිල්පත සාර්ථකයි! අලුත් බිල්පතක් අරඹන්නද?")) {
+        if(confirm("Transaction Complete! Start a new bill?")) {
             location.reload();
         }
     });
