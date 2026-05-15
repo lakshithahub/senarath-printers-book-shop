@@ -1,57 +1,91 @@
-
+<!DOCTYPE html>
 <html lang='en'>
 <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <title>Stock Inventory - Lakshitha POS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f4f7f6; color: #333; padding-bottom: 50px; }
+        :root {
+            --primary: #2c3e50;
+            --accent: #2ecc71;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #1e272e;
+        }
 
-        /* Navigation Bar */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #eef2f3; color: #333; padding-bottom: 50px; }
+
+        /* Navigation */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            background-color: #2c3e50; padding: 15px 50px; color: #f1c40f;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000;
+            background-color: var(--primary); padding: 15px 40px; color: white;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .nav-links { list-style: none; display: flex; gap: 25px; }
-        .nav-links a { color: #ffffff; text-decoration: none; transition: 0.3s; font-weight: 600; }
+        .nav-links { list-style: none; display: flex; gap: 20px; }
+        .nav-links a { color: #bdc3c7; text-decoration: none; transition: 0.3s; font-weight: 500; font-size: 14px; }
+        .nav-links a:hover { color: var(--accent); }
 
         /* Floating Logo */
-        .logo-container { position: fixed; top: 50%; right: 30px; transform: translateY(-50%); z-index: 999; }
+        .logo-container { position: fixed; bottom: 30px; right: 30px; z-index: 999; }
         .floating-logo {
-            width: 100px; height: 100px; background: linear-gradient(145deg, #063525, #1a5c46);
-            border: 3px solid #42c498; border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            animation: verticalFloat 4s ease-in-out infinite;
+            width: 80px; height: 80px; background: white;
+            border: 4px solid var(--accent); border-radius: 50%; padding: 5px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: verticalFloat 3s ease-in-out infinite;
         }
-        @keyframes verticalFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        @keyframes verticalFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* Container */
-        .header-section { text-align: center; padding: 40px 20px; }
-        .title-text { color: #2ecc71; font-size: 45px; font-weight: bold; }
+        /* Header Section */
+        .header-section { text-align: center; padding: 50px 20px 30px; }
+        .title-text { color: var(--primary); font-size: 36px; font-weight: 700; letter-spacing: -1px; }
+        .date-badge { background: white; padding: 5px 15px; border-radius: 20px; display: inline-block; margin-top: 10px; font-size: 14px; color: #7f8c8d; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        .inventory-box { max-width: 950px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-        .input-group { display: flex; gap: 10px; margin-bottom: 25px; }
-        input { padding: 12px; border: 1px solid #ddd; border-radius: 8px; flex: 1; outline-color: #2ecc71; font-size: 16px; }
+        /* Stats Cards */
+        .stats-container { display: flex; justify-content: center; gap: 20px; max-width: 1000px; margin: 0 auto 30px; padding: 0 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 15px; flex: 1; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--accent); }
+        .stat-card h3 { font-size: 12px; text-transform: uppercase; color: #95a5a6; margin-bottom: 5px; }
+        .stat-card p { font-size: 24px; font-weight: 700; color: var(--primary); }
+
+        /* Main Inventory Box */
+        .inventory-box { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
         
-        .add-btn { background: #2ecc71; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-print { background: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; font-size: 16px; }
+        .input-group { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; margin-bottom: 25px; }
+        input { padding: 12px 15px; border: 2px solid #edeff2; border-radius: 10px; outline: none; transition: 0.3s; font-size: 15px; }
+        input:focus { border-color: var(--accent); background: #f9fdfb; }
+        
+        .add-btn { background: var(--accent); color: white; border: none; padding: 0 25px; border-radius: 10px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .add-btn:hover { background: #27ae60; transform: translateY(-2px); }
 
-        /* Table */
-        .stocktable { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .stocktable th { background-color: #34495e; color: white; padding: 15px; text-align: left; }
-        .stocktable td { padding: 15px; border-bottom: 1px solid #eee; }
-        .del-btn { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+        /* Search Bar */
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #bdc3c7; }
+        .search-container input { width: 100%; padding-left: 45px; background: var(--light); border: none; }
 
-        /* Print Design */
+        /* Table Design */
+        .table-wrapper { overflow-x: auto; }
+        .stocktable { width: 100%; border-collapse: collapse; }
+        .stocktable th { background-color: #f8f9fa; color: #7f8c8d; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; font-weight: 600; border-bottom: 2px solid #eee; }
+        .stocktable td { padding: 18px 15px; border-bottom: 1px solid #f1f1f1; font-size: 15px; }
+        .stocktable tr:hover { background-color: #fcfdfe; }
+
+        .qty-badge { background: #e8f8f0; color: var(--accent); padding: 4px 10px; border-radius: 6px; font-weight: 700; }
+        .del-btn { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 18px; transition: 0.2s; }
+        .del-btn:hover { transform: scale(1.2); }
+
+        .btn-print { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; margin-top: 25px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-print:hover { background: #1a252f; }
+
+        /* Print Layout */
         @media print {
-            .navbar, .logo-container, .input-group, .del-btn, .btn-print, .header-section p:not(.title-text) { display: none !important; }
+            .navbar, .logo-container, .input-group, .search-container, .btn-print, .action-col, .del-btn { display: none !important; }
             body { background: white; padding: 0; }
-            .inventory-box { box-shadow: none; max-width: 100%; border: none; padding: 0; }
-            .title-text { font-size: 30px; margin-bottom: 20px; color: black; }
-            .stocktable th { background-color: #eee !important; color: black; border: 1px solid #ddd; }
+            .inventory-box { box-shadow: none; max-width: 100%; padding: 0; }
+            .title-text { font-size: 28px; color: black; }
+            .stocktable th { background: #eee !important; border: 1px solid #ddd; color: black; }
             .stocktable td { border: 1px solid #ddd; }
         }
     </style>
@@ -59,53 +93,88 @@
 <body>
 
     <nav class="navbar">
-        <div class="logo" style="font-size: 26px; font-weight: bold;">LAKSHITHA STOCK</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-boxes-stacked" style="color: var(--accent); font-size: 24px;"></i>
+            <span style="font-size: 20px; font-weight: 800; letter-spacing: 1px;">LAKSHITHA POS</span>
+        </div>
         <ul class="nav-links">
-            <li><a href="udara{sell inter fase}.html">SELL PAGE</a></li>
-            <li><a href="#" onclick="location.reload()">REFRESH</a></li>
+            <li><a href="#"><i class="fas fa-home"></i> DASHBOARD</a></li>
+            <li><a href="udara{sell inter fase}.html"><i class="fas fa-shopping-cart"></i> SELL PAGE</a></li>
+            <li><a href="#" onclick="location.reload()"><i class="fas fa-sync"></i> REFRESH</a></li>
         </ul>
     </nav>
 
     <div class="logo-container">
         <div class="floating-logo">
-            <img src="file:///C:/LAKSHITHA/test%20one/UDARA[LOGO].jpeg" alt="Logo" style="width: 85%; height: 85%; border-radius: 50%; object-fit: cover;">
+            <img src="file:///C:/LAKSHITHA/test%20one/UDARA[LOGO].jpeg" alt="Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
         </div>
     </div>
 
     <div class="header-section">
-        <p class="title-text">Current Stock Report</p>
-        <p style="opacity: 0.7;">Date: <span id="currentDate"></span></p>
+        <p class="title-text">Inventory Management</p>
+        <div class="date-badge"><i class="far fa-calendar-alt"></i> <span id="currentDate"></span></div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Total Items</h3>
+            <p id="totalItemsCount">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Inventory Value (Rs.)</h3>
+            <p id="totalStockValue">0.00</p>
+        </div>
     </div>
 
     <div class="inventory-box">
         <div class="input-group">
-            <input type="text" id="itemName" placeholder="Item Name" onkeydown="if(event.key==='Enter') document.getElementById('itemPrice').focus()">
-            <input type="number" id="itemPrice" placeholder="Price (Rs.)" onkeydown="if(event.key==='Enter') document.getElementById('itemQty').focus()">
-            <input type="number" id="itemQty" placeholder="Add Qty" onkeydown="if(event.key==='Enter') updateStock()">
-            <button class="add-btn" onclick="updateStock()">Update Stock</button>
+            <input type="text" id="itemName" placeholder="Item Name" autofocus>
+            <input type="number" id="itemPrice" placeholder="Price (Rs.)">
+            <input type="number" id="itemQty" placeholder="Quantity">
+            <button class="add-btn" onclick="updateStock()"><i class="fas fa-plus"></i> ADD</button>
         </div>
 
-        <table class="stocktable">
-            <thead>
-                <tr>
-                    <th>Item Description</th>
-                    <th>Unit Price (Rs.)</th>
-                    <th>Available Qty</th>
-                    <th class="del-btn">Action</th>
-                </tr>
-            </thead>
-            <tbody id="stockBody"></tbody>
-        </table>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search inventory..." onkeyup="filterStock()">
+        </div>
 
-        <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> PRINT STOCK REPORT</button>
+        <div class="table-wrapper">
+            <table class="stocktable">
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th>Unit Price</th>
+                        <th>Qty Available</th>
+                        <th class="action-col" style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="stockBody"></tbody>
+            </table>
+        </div>
+
+        <button class="btn-print" onclick="window.print()">
+            <i class="fas fa-print"></i> GENERATE PDF / PRINT REPORT
+        </button>
     </div>
 
     <script>
         const STOCK_KEY = 'inventory_stock';
 
         window.onload = function() {
-            document.getElementById('currentDate').innerText = new Date().toLocaleDateString();
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
             renderStock();
+            
+            // Enter key navigation
+            const inputs = ['itemName', 'itemPrice', 'itemQty'];
+            inputs.forEach((id, index) => {
+                document.getElementById(id).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        if (index < inputs.length - 1) document.getElementById(inputs[index+1]).focus();
+                        else updateStock();
+                    }
+                });
+            });
         };
 
         function updateStock() {
@@ -114,7 +183,7 @@
             let qty = parseInt(document.getElementById('itemQty').value);
 
             if (!name || isNaN(price) || isNaN(qty)) {
-                alert("කරුණාකර සියලු විස්තර නිවැරදිව ඇතුළත් කරන්න.");
+                alert("වැරදියි: කරුණාකර නම, මිල සහ ප්‍රමාණය ඇතුළත් කරන්න.");
                 return;
             }
 
@@ -138,11 +207,21 @@
         }
 
         function deleteItem(index) {
-            if (confirm("මෙම බඩුව ඉවත් කරන්නද?")) {
+            if (confirm("මෙම භාණ්ඩය ඉවත් කිරීමට තහවුරු කරන්න?")) {
                 let stock = JSON.parse(localStorage.getItem(STOCK_KEY)) || [];
                 stock.splice(index, 1);
                 localStorage.setItem(STOCK_KEY, JSON.stringify(stock));
                 renderStock();
+            }
+        }
+
+        function filterStock() {
+            let filter = document.getElementById('searchInput').value.toLowerCase();
+            let rows = document.getElementById('stockBody').getElementsByTagName('tr');
+            
+            for (let row of rows) {
+                let name = row.getElementsByTagName('td')[0].textContent.toLowerCase();
+                row.style.display = name.includes(filter) ? "" : "none";
             }
         }
 
@@ -151,16 +230,27 @@
             let tableBody = document.getElementById('stockBody');
             tableBody.innerHTML = "";
 
+            let totalVal = 0;
+            let itemCount = 0;
+
             stock.forEach((item, index) => {
+                totalVal += (item.price * item.qty);
+                itemCount++;
+                
                 tableBody.insertAdjacentHTML('beforeend', `
                     <tr>
-                        <td>${item.name}</td>
-                        <td>${item.price.toFixed(2)}</td>
-                        <td><b>${item.qty}</b></td>
-                        <td class="del-btn"><button class="del-btn" onclick="deleteItem(${index})">Remove</button></td>
+                        <td style="font-weight: 600; color: #2c3e50;">${item.name}</td>
+                        <td style="color: #7f8c8d;">Rs. ${item.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        <td><span class="qty-badge">${item.qty}</span></td>
+                        <td class="action-col" style="text-align: center;">
+                            <button class="del-btn" onclick="deleteItem(${index})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
                     </tr>
                 `);
             });
+
+            document.getElementById('totalItemsCount').innerText = itemCount;
+            document.getElementById('totalStockValue').innerText = totalVal.toLocaleString(undefined, {minimumFractionDigits: 2});
         }
     </script>
 </body>
