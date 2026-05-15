@@ -7,24 +7,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-
-
-<nav>
-    <ul>
-       
-        <li><a href="README.md">Inventory</a></li>
-    </ul>
-</nav>
-
-
-
-
-
-
-
-
-
-    
     <style>
         :root {
             --bg-dark: #0f111a;
@@ -136,7 +118,6 @@
         }
         .btn-back:hover { background: var(--border-color); }
 
-        /* Print Area Styles (Clean for Paper) */
         @media print {
             body * { visibility: hidden; }
             #bill-print-area, #bill-print-area * { visibility: visible; }
@@ -152,7 +133,7 @@
 
 <div class="container no-print">
     <div style="width: 100%;">
-        <a href="udara{invoice}.html" class="btn-back">
+        <a href="README.md" class="btn-back">
             <i class="fas fa-chevron-left"></i> BACK TO DASHBOARD
         </a> 
     </div>
@@ -245,7 +226,6 @@ $(document).ready(function() {
         $('#itemSuggestions').html(options);
     }
 
-    // Input Navigation
     $('#itemName').on('keydown', e => { if (e.key === 'Enter') $('#itemPrice').focus(); });
     $('#itemPrice').on('keydown', e => { if (e.key === 'Enter') $('#itemQty').focus(); });
     $('#itemQty').on('keydown', e => { if (e.key === 'Enter') $('#addItem').click(); });
@@ -301,7 +281,6 @@ $(document).ready(function() {
 
         localStorage.setItem('inventory_stock', JSON.stringify(stock));
 
-        // Prepare Print View
         let printRows = '';
         currentBillItems.forEach(item => {
             printRows += `<tr>
