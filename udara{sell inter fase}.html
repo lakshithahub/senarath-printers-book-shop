@@ -1,211 +1,283 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales - Senarath Printers</title>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
+    <title>Professional POS System</title>
     <style>
+        /* --- Root Variables for Dark Theme --- */
         :root {
-            --bg-dark: #090b11;
-            --card-bg: #151926;
-            --accent-yellow: #ffcc00;
-            --accent-glow: rgba(255, 204, 0, 0.3);
-            --text-main: #f0f0f0;
-            --text-dim: #94a3b8;
-            --border-color: #2d3142;
-            --input-bg: #1e2533;
-            --danger: #ff4d4d;
-            --success: #2ecc71;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
         }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg-dark); 
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; padding: 20px; }
 
-        /* Sidebar Style */
-        .sidebar {
-            width: 250px;
-            background: var(--card-bg);
-            height: 100vh;
-            position: fixed;
-            border-right: 1px solid var(--border-color);
-            padding: 20px;
-        }
+        /* --- Header Section --- */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background: var(--card-bg); border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-placeholder { width: 40px; height: 40px; background: var(--accent-blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
+        .company-name { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+        #live-date { font-size: 1rem; color: var(--accent-blue); font-weight: 600; }
 
-        .logo-area { font-size: 1.2rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 30px; }
-        .menu-list { list-style: none; padding: 0; }
-        .menu-link { display: flex; align-items: center; gap: 12px; color: var(--text-main); text-decoration: none; padding: 12px; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; }
-        .menu-link:hover { background: var(--accent-glow); color: var(--accent-yellow); }
-        .menu-link.active { background: var(--accent-yellow); color: var(--bg-dark); font-weight: bold; }
+        /* --- Main Layout --- */
+        .container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; flex: 1; margin-bottom: 40px; }
+        .panel { background: var(--card-bg); border-radius: 12px; padding: 25px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .panel-title { font-size: 1.2rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
 
-        /* Main Layout */
-        .main-content { margin-left: 290px; padding: 30px; width: calc(100% - 320px); display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+        /* --- Form & Input Elements --- */
+        .form-group { margin-bottom: 15px; position: relative; }
+        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; color: white; font-size: 1rem; outline: none; transition: border 0.2s; }
+        input:focus { border-color: var(--accent-blue); }
 
-        /* Product Section */
-        .product-section { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); }
-        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: white; margin-bottom: 20px; outline: none; }
+        /* Auto-Suggest Dropdown Box */
+        .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: #1e293b; border: 1px solid var(--border-color); border-radius: 8px; max-height: 150px; overflow-y: auto; z-index: 10; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .suggestion-item { padding: 10px 15px; cursor: pointer; transition: background 0.2s; }
+        .suggestion-item:hover { background: var(--accent-blue); color: white; }
 
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .product-card { background: var(--bg-dark); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; cursor: pointer; transition: 0.3s; }
-        .product-card:hover { border-color: var(--accent-yellow); transform: translateY(-3px); }
-        .product-card h4 { margin: 10px 0 5px; font-size: 0.9rem; }
-        .product-card .price { color: var(--accent-yellow); font-weight: bold; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .btn:hover { opacity: 0.9; }
+        .btn-add { background: var(--accent-blue); color: white; width: 100%; margin-top: 10px; }
+        .btn-print { background: var(--accent-green); color: white; width: 100%; margin-top: auto; padding: 15px; font-size: 1.1rem; }
 
-        /* Cart Section */
-        .cart-section { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); height: calc(100vh - 100px); position: sticky; top: 30px; display: flex; flex-direction: column; }
-        .cart-items { flex-grow: 1; overflow-y: auto; margin-top: 15px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
+        /* --- Billing Table & Receipt Area --- */
+        .receipt-container { flex: 1; overflow-y: auto; margin-bottom: 20px; }
+        .bill-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .bill-table th { padding: 10px; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid var(--border-color); }
+        .bill-table td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
         
-        .qty-btn { background: var(--input-bg); border: none; color: white; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; }
-        .remove-btn { color: var(--danger); cursor: pointer; margin-left: 10px; }
+        .btn-delete { background: none; border: none; color: var(--accent-red); cursor: pointer; font-size: 1rem; }
+        .total-section { border-top: 2px dashed var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 1.4rem; font-weight: 700; color: var(--accent-green); }
 
-        .cart-footer { border-top: 2px solid var(--border-color); padding-top: 15px; }
-        .total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 15px; }
-        
-        .checkout-btn { width: 100%; background: var(--accent-yellow); color: var(--bg-dark); border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
-        .checkout-btn:hover { background: #e6b800; box-shadow: 0 0 15px var(--accent-glow); }
+        /* --- Footer Section --- */
+        footer { text-align: center; padding: 15px; font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--border-color); margin-top: auto; }
+
+        /* =======================================================
+           🖨️ PRINT STYLESHEET (Optimized for standard print/PDF)
+           ======================================================= */
+        @media print {
+            body { background: white !important; color: black !important; padding: 0; }
+            header, .panel:nth-child(1), .btn-delete, .btn-print, footer { display: none !important; }
+            .container { display: block; }
+            .panel:nth-child(2) { border: none !important; background: white !important; width: 100%; padding: 0; }
+            .panel-title { color: black !important; border-bottom: 2px solid black !important; font-size: 1.5rem; text-align: center; }
+            .bill-table th { color: #333 !important; border-bottom: 2px solid black !important; }
+            .bill-table td { color: black !important; border-bottom: 1px solid #ccc !important; }
+            .total-section { color: black !important; border-top: 2px dashed black !important; font-size: 1.6rem; }
+            /* Show a custom print header/footer just inside the receipt if needed */
+            .receipt-container::before { content: "INVOICE / RECEIPT"; display: block; text-align: center; font-weight: bold; font-size: 1.4rem; margin-bottom: 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo-area"><i class="fas fa-print"></i> Senarath POS</div>
-        <ul class="menu-list">
-            <li><a href="invoice.html" class="menu-link"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="inventory.html" class="menu-link"><i class="fas fa-box"></i> Inventory</a></li>
-            <li><a href="#" class="menu-link active"><i class="fas fa-shopping-cart"></i> Sales</a></li>
-        </ul>
-    </div>
+    <header>
+        <div class="logo-area">
+            <div class="logo-placeholder">L</div>
+            <div class="company-name">Lakshitha Smart POS</div>
+        </div>
+        <div id="live-date">Loading Date & Time...</div>
+    </header>
 
-    <div class="main-content">
-        <!-- වම් පැත්ත: භාණ්ඩ තෝරාගැනීම -->
-        <div class="product-section">
-            <h2>Select Items</h2>
-            <input type="text" id="productSearch" class="search-box" placeholder="Search item code or name...">
+    <div class="container">
+        
+        <div class="panel">
+            <div class="panel-title">Add Item to Bill</div>
             
-            <div class="product-grid" id="productGrid">
-                <!-- Example Items (මෙහි ඔබේ Price List එකට අනුව භාණ්ඩ පිරවිය හැක) -->
-                <div class="product-card" onclick="addToCart(1, 'A4 Paper Bundle', 1250)">
-                    <i class="fas fa-file-alt fa-2x"></i>
-                    <h4>A4 Paper Bundle</h4>
-                    <p class="price">Rs. 1,250.00</p>
-                </div>
-                <div class="product-card" onclick="addToCart(2, 'Color Print', 45)">
-                    <i class="fas fa-fill-drip fa-2x"></i>
-                    <h4>Color Print</h4>
-                    <p class="price">Rs. 45.00</p>
-                </div>
-                <div class="product-card" onclick="addToCart(3, 'Binding Work', 350)">
-                    <i class="fas fa-book fa-2x"></i>
-                    <h4>Binding Work</h4>
-                    <p class="price">Rs. 350.00</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- දකුණු පැත්ත: කරත්තය (Bill) -->
-        <div class="cart-section">
-            <h3>Current Order</h3>
-            <div class="cart-items" id="cartItems">
-                <p style="color: var(--text-dim); text-align: center;">Cart is empty</p>
+            <div class="form-group">
+                <label for="item-name">Item Name</label>
+                <input type="text" id="item-name" autocomplete="off" placeholder="Type item name..." oninput="handleSearch()">
+                <div class="suggestions-box" id="suggestions-list"></div>
             </div>
 
-            <div class="cart-footer">
-                <div class="total-row">
-                    <span>Total:</span>
-                    <span id="grandTotal">Rs. 0.00</span>
-                </div>
-                <button class="checkout-btn" onclick="processCheckout()">
-                    <i class="fas fa-check-circle"></i> COMPLETE ORDER
-                </button>
+            <div class="form-group">
+                <label for="item-price">Unit Price (Rs.)</label>
+                <input type="number" id="item-price" placeholder="0.00">
             </div>
+
+            <div class="form-group">
+                <label for="item-qty">Quantity (Qty)</label>
+                <input type="number" id="item-qty" value="1" min="1">
+            </div>
+
+            <button class="btn btn-add" onclick="addItemToBill()">Add Item</button>
         </div>
+
+        <div class="panel">
+            <div class="panel-title">Current Bill</div>
+            
+            <div class="receipt-container">
+                <table class="bill-table">
+                    <thead>
+                        <tr>
+                            <th>Item Description</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th class="btn-delete"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="bill-body">
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="total-section">
+                <span>Grand Total:</span>
+                <span>Rs. <span id="grand-total">0.00</span></span>
+            </div>
+
+            <button class="btn btn-print" onclick="printBill()">Print Bill & Save PDF</button>
+        </div>
+
     </div>
+
+    <footer>
+        Web development by lakshitha
+    </footer>
 
     <script>
-        let cart = [];
+        // --- 1. Hardcoded Mockup Products Array ---
+        const systemProducts = [
+            { name: 'Bread', price: 150 },
+            { name: 'Milk 1L', price: 450 },
+            { name: 'Egg', price: 40 },
+            { name: 'Cheese 200g', price: 650 },
+            { name: 'Tea Pack 200g', price: 380 },
+            { name: 'Sugar 1kg', price: 290 },
+            { name: 'Biscuit Cream Crackers', price: 120 }
+        ];
 
-        // 1. භාණ්ඩයක් Cart එකට එකතු කිරීම
-        function addToCart(id, name, price) {
-            let existingItem = cart.find(item => item.id === id);
-            
-            if (existingItem) {
-                existingItem.qty++;
-            } else {
-                cart.push({ id, name, price, qty: 1 });
-            }
-            renderCart();
+        let activeCart = [];
+
+        // --- 2. Live Dynamic Date/Time ---
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('live-date').innerText = now.toLocaleString();
         }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
 
-        // 2. ප්‍රමාණය වෙනස් කිරීම
-        function updateQty(id, amount) {
-            let item = cart.find(item => item.id === id);
-            if (item) {
-                item.qty += amount;
-                if (item.qty <= 0) {
-                    cart = cart.filter(i => i.id !== id);
-                }
-                renderCart();
-            }
-        }
+        // --- 3. Reactive Auto-Suggest Logic ---
+        const itemNameInput = document.getElementById('item-name');
+        const itemPriceInput = document.getElementById('item-price');
+        const itemQtyInput = document.getElementById('item-qty');
+        const suggestionsList = document.getElementById('suggestions-list');
 
-        // 3. කරත්තය Update කිරීම (UI)
-        function renderCart() {
-            let cartHtml = "";
-            let total = 0;
+        function handleSearch() {
+            const query = itemNameInput.value.toLowerCase();
+            suggestionsList.innerHTML = '';
 
-            if (cart.length === 0) {
-                cartHtml = '<p style="color: var(--text-dim); text-align: center;">Cart is empty</p>';
-            } else {
-                cart.forEach(item => {
-                    let subtotal = item.price * item.qty;
-                    total += subtotal;
-                    cartHtml += `
-                        <div class="cart-item">
-                            <div>
-                                <strong>${item.name}</strong><br>
-                                <small>${item.price.toFixed(2)} x ${item.qty}</small>
-                            </div>
-                            <div>
-                                <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                                <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
-                                <span class="remove-btn" onclick="updateQty(${item.id}, -${item.qty})"><i class="fas fa-trash"></i></span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            $("#cartItems").html(cartHtml);
-            $("#grandTotal").text(`Rs. ${total.toLocaleString()}.00`);
-        }
-
-        // 4. Checkout Logic
-        function processCheckout() {
-            if (cart.length === 0) {
-                alert("කරුණාකර භාණ්ඩයක් තෝරන්න!");
+            if (!query) {
+                suggestionsList.style.display = 'none';
                 return;
             }
-            alert("ගනුදෙනුව සාර්ථකයි! මුළු මුදල: " + $("#grandTotal").text());
-            cart = [];
-            renderCart();
+
+            // Filter system products matching the input string
+            const filtered = systemProducts.filter(p => p.name.toLowerCase().includes(query));
+
+            if (filtered.length > 0) {
+                filtered.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerText = `${product.name} (Rs.${product.price})`;
+                    div.onclick = () => selectProduct(product);
+                    suggestionsList.appendChild(div);
+                });
+                suggestionsList.style.display = 'block';
+            } else {
+                suggestionsList.style.display = 'none';
+            }
         }
 
-        // 5. Search Logic (Simple)
-        $("#productSearch").on("keyup", function() {
-            let value = $(this).val().toLowerCase();
-            $(".product-card").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-    </script>
+        // When a user clicks a suggestion, auto-fill item name and unit price
+        function selectProduct(product) {
+            itemNameInput.value = product.name;
+            itemPriceInput.value = product.price;
+            suggestionsList.style.display = 'none';
+            itemQtyInput.focus(); // Shift focus to qty for faster workflows
+        }
 
+        // Close suggestion box when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== itemNameInput) suggestionsList.style.display = 'none';
+        });
+
+        // --- 4. Billing Actions ---
+        function addItemToBill() {
+            const name = itemNameInput.value.trim();
+            const price = parseFloat(itemPriceInput.value);
+            const qty = parseInt(itemQtyInput.value);
+
+            if (!name || isNaN(price) || isNaN(qty) || qty <= 0) {
+                alert("Please enter valid item details.");
+                return;
+            }
+
+            // If product already in cart, update quantity, else add new entry
+            const existingItem = activeCart.find(item => item.name.toLowerCase() === name.toLowerCase());
+            if (existingItem) {
+                existingItem.qty += qty;
+            } else {
+                activeCart.push({ name, price, qty });
+            }
+
+            // Reset inputs
+            itemNameInput.value = '';
+            itemPriceInput.value = '';
+            itemQtyInput.value = '1';
+
+            renderBill();
+        }
+
+        function removeItem(index) {
+            activeCart.splice(index, 1);
+            renderBill();
+        }
+
+        function renderBill() {
+            const billBody = document.getElementById('bill-body');
+            const grandTotalSpan = document.getElementById('grand-total');
+            billBody.innerHTML = '';
+            let total = 0;
+
+            activeCart.forEach((item, index) => {
+                const rowTotal = item.price * item.qty;
+                total += rowTotal;
+
+                billBody.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>Rs. ${item.price.toFixed(2)}</td>
+                        <td>${item.qty}</td>
+                        <td><strong>Rs. ${rowTotal.toFixed(2)}</strong></td>
+                        <td class="btn-delete">
+                            <button class="btn-delete" onclick="removeItem(${index})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            grandTotalSpan.innerText = total.toFixed(2);
+        }
+
+        // --- 5. Clean Print / PDF Logic ---
+        function printBill() {
+            if (activeCart.length === 0) {
+                alert("Cannot print an empty bill.");
+                return;
+            }
+            // Triggers browser native interface (Can choose printer hardware or Save as PDF directly)
+            window.print();
+        }
+    </script>
 </body>
 </html>
